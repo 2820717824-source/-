@@ -65,11 +65,32 @@ def _all_keywords() -> list[str]:
 
 ALL_KEYWORDS: list[str] = _all_keywords()
 
+# 简短英文关键词（全大写、纯 ASCII、≤6 字符）使用词边界正则匹配，
+# 避免 "PET" 匹配 "pet"、"MRI" 匹配 "mrs." 等误报。
+_SHORT_ENGLISH_KWS: set[str] = {
+    kw for kw in ALL_KEYWORDS
+    if kw.isascii() and kw.isupper() and len(kw) <= 6
+}
+
+_KEYWORD_PATTERNS: list[re.Pattern | str] = []
+for kw in ALL_KEYWORDS:
+    if kw in _SHORT_ENGLISH_KWS:
+        # 全大写英文缩写（PET、MRI、NMPA 等）—— 大小写敏感，仅匹配大写形式
+        _KEYWORD_PATTERNS.append(re.compile(r"\b" + re.escape(kw) + r"\b"))
+    else:
+        # 中英文通用关键词 —— 不区分大小写子串匹配
+        _KEYWORD_PATTERNS.append(kw.lower())
+
 
 def matches_keywords(title: str = "", content: str = "") -> bool:
     """标题或内容匹配任一关键词（不区分大小写）"""
-    text = f"{title} {content}".lower()
-    for kw in ALL_KEYWORDS:
-        if kw.lower() in text:
-            return True
+    text = f"{title} {content}"
+    text_lower = text.lower()
+    for p in _KEYWORD_PATTERNS:
+        if isinstance(p, re.Pattern):
+            if p.search(text):
+                return True
+        else:
+            if p in text_lower:
+                return True
     return False

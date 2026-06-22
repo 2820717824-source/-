@@ -70,8 +70,6 @@ class NMPASpider(BaseSpider):
                 if not link:
                     continue
                 href = link[0].xpath('./@href')[0] if link[0].xpath('./@href') else ""
-                if not href:
-                    href = link[0].xpath('./@href')[0] if link[0].xpath('./@href') else ""
 
                 title = (link[0].xpath('string(.)') or "").strip()
                 if not title:
@@ -79,7 +77,7 @@ class NMPASpider(BaseSpider):
 
                 # 日期
                 date_el = li.xpath('.//span[contains(@class,"date")]/text()')
-                date_str = date_el[0].strip() if date_el else datetime.now().strftime("%Y-%m-%d")
+                date_str = date_el[0].strip() if date_el else datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
                 full_url = urljoin(page_info["url"], href)
 

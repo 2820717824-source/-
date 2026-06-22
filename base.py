@@ -14,6 +14,7 @@ from logger_utils import logger
 from typing import List, Dict, Optional
 import asyncio
 from datetime import datetime
+from keywords import matches_keywords
 
 
 class BaseSpider:
@@ -199,7 +200,6 @@ class BaseSpider:
                     try:
                         news_info = await self.get_news_info(item)
                         if news_info and self.keyword_filter:
-                            from keywords import matches_keywords
                             if not matches_keywords(
                                 title=news_info.get("title", ""),
                                 content=news_info.get("article_info", ""),

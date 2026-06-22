@@ -71,7 +71,7 @@ class AnhuiWJW(BaseSpider):
                 date_el = li.xpath('.//span[contains(@class,"date")]/text()')
                 if not date_el:
                     date_el = li.xpath('.//text()[contains(.,"202")]')
-                date_str = date_el[0].strip() if date_el else datetime.now().strftime("%Y-%m-%d")
+                date_str = date_el[0].strip() if date_el else datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
                 full_url = urljoin(page_info["url"], href)
 
