@@ -23,6 +23,8 @@ from tengxunxinwen import TenXuNews
 from tengxuntiyu import TenXun
 from xinlang import XinLangGuoJi
 from zhongguoribao import ChineseDayNews
+from nmpa import NMPASpider
+from anhui_wjw import AnhuiWJW
 
 # 加载.env文件
 load_dotenv()
@@ -105,6 +107,20 @@ spiders = {
         "class_sleep_time": 5,
         # 文章详情的间隔时间，单位为秒，这里设置为0，表示无间隔
         "info_sleep_time": 5,
+    },
+    "nmpa": {
+        "spider": NMPASpider(),
+        "interval": int(os.getenv("NMPA_INTERVAL", 600)),
+        "last_run": 0,
+        "class_sleep_time": 0,
+        "info_sleep_time": 2,
+    },
+    "anhui_wjw": {
+        "spider": AnhuiWJW(),
+        "interval": int(os.getenv("ANHUI_WJW_INTERVAL", 600)),
+        "last_run": 0,
+        "class_sleep_time": 0,
+        "info_sleep_time": 2,
     },
 }
 
