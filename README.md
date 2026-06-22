@@ -1,6 +1,8 @@
-# Article Spider
+# 医药行业热点爬虫 — Article Spider（改造版）
 
-一个基于 Python 异步编程的新闻文章爬虫项目，支持从多个中文新闻网站抓取文章并存储到 PostgreSQL 数据库。
+> **原创改造声明**：基于 [Anning01/article-spider](https://github.com/Anning01/article-spider) 通用新闻爬虫改造为**医药行业热点监控系统**，为安徽省独家代理业务（康联达健康 Meditrusthealth + 曼斯普医学科技 imsrmt.com）提供行业资讯监控。新增国家药监局、安徽省卫健委医药专用爬虫源，并在通用新闻源中加入关键词过滤。
+
+基于 Python 异步编程的新闻文章爬虫项目，支持从多个中文新闻网站和医药政策网站抓取热点文章并存储到 PostgreSQL 数据库。
 
 ## 支持的新闻源
 
