@@ -125,7 +125,8 @@ spiders = {
 }
 
 # 默认爬取数量限制 None 代表不限制
-DEFAULT_LIMIT = int(os.getenv("DEFAULT_LIMIT", None))
+_default_limit_raw = os.getenv("DEFAULT_LIMIT")
+DEFAULT_LIMIT = int(_default_limit_raw) if _default_limit_raw else None
 
 
 async def init_database():
