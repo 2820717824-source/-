@@ -28,16 +28,42 @@
 
 ## 操作记录
 
-### 2026-06-22：初始分析与准备
+### 2026-06-22：完整改造实施（Superpowers 全流程）
 
-1. 确认项目结构：8 个新闻源爬虫 + BaseSpider 基类 + asyncpg 数据库
-2. 安装 Superpowers 插件：`claude plugin install superpowers@superpowers-marketplace` (v6.0.3)
-3. 编写本日志文件 `CHANGELOG.md`
-4. 等待重启会话以加载 Superpowers skills
+**策略调整**：放弃"先过滤后加源"的原始计划，改为**先加医药源、再注册、再加过滤**，确保系统跑起来立刻有产出。
 
-### 待重启后执行
+#### 变更文件清单
 
-参见下方「重启后操作指引」。
+| 文件 | 操作 | 说明 |
+|------|------|------|
+| `keywords.py` | 新建 | 4 类关键词（公司/业务/区域/行业），含简短英文词边界防误匹配 |
+| `nmpa.py` | 新建 | 国家药监局爬虫，3 个栏目（药品公告、公告通告、政策解读） |
+| `anhui_wjw.py` | 新建 | 安徽省卫健委爬虫，2 个栏目（工作动态、通知公告） |
+| `base.py` | 修改 | 新增 `keyword_filter` 属性 + `_matches_keywords()` 过滤钩子 |
+| `main.py` | 修改 | 注册 2 个新爬虫，import NMPASpider + AnhuiWJW |
+| `.env.example` | 修改 | 新增 NMPA_INTERVAL / ANHUI_WJW_INTERVAL（600s） |
+| `README.md` | 修改 | 更新为医药爬虫标题与原创作声明 |
+
+#### 修复的 Bug
+
+1. **`DEFAULT_LIMIT = int(None)`** — 当 `.env` 未设置该变量时抛 TypeError，改为安全取值
+2. **日期格式崩溃** — 列表页无日期时的 `strftime("%Y-%m-%d")` 与 `save_article` 期望的 `%Y-%m-%d %H:%M:%S` 不匹配
+3. **PET 误匹配** — 全小写 "pet"（宠物）通过关键词过滤，改为大小写敏感正则 `\bPET\b`
+
+#### 使用方式
+
+```bash
+# 配置 .env 后
+uv run python main.py
+# 独立测试某个爬虫
+uv run python nmpa.py
+uv run python anhui_wjw.py
+```
+
+#### 后续可扩展
+
+- 新增医药媒体源（赛柏蓝、丁香园、医脉通等）—— 按 `xxx.py` + `main.py` 注册模式
+- 每日行业简报（可选）—— 从 DB 查询当日入库的医药文章，生成 Markdown 汇总
 
 ---
 
