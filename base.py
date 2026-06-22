@@ -27,6 +27,7 @@ class BaseSpider:
     }
     source_name = "Unknown"  # 子类需要设置这个属性
     category = "General"  # 子类可以设置分类
+    keyword_filter = True  # 默认启用关键词过滤，医药源子类设 False
 
     async def request(
         self,
@@ -197,6 +198,13 @@ class BaseSpider:
                 async with semaphore:
                     try:
                         news_info = await self.get_news_info(item)
+                        if news_info and self.keyword_filter:
+                            from keywords import matches_keywords
+                            if not matches_keywords(
+                                title=news_info.get("title", ""),
+                                content=news_info.get("article_info", ""),
+                            ):
+                                return 0
                         if news_info and await self.save_article(news_info):
                             return 1
                     except Exception as e:
